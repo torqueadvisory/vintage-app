@@ -13,15 +13,15 @@ insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_typ
 values ('digital-Products', 'digital-Products', false, 5242880, array['text/html'])
 on conflict (id) do nothing;
 
--- Stripe one-time $79 price for "Service Dept. KPI Dashboard" (sandbox/test
--- mode), created 2026-07-15.
+-- Stripe one-time $79 price for "Service Dept. KPI Dashboard" (Stripe LIVE
+-- mode), created 2026-07-15; live price ID set 2026-07-19.
 insert into public.products (slug, name, product_type, requires_account, stripe_price_id, storage_path, is_active)
 values (
   'kpi-dashboard',
   'Service Dept. KPI Dashboard',
   'one_time',
   false,
-  'price_1TtfImFpYKBwzJBRJGXA6etT',
+  'price_1TueX6FlDAiFcsK7LPqLmUVt',
   'kpi-dashboard/index.html',
   true
 );

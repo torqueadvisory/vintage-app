@@ -40,8 +40,8 @@ alter table public.purchases enable row level security;
 create policy "users read own purchases" on public.purchases
   for select using (auth.uid() = user_id);
 
--- Seed the VINtage subscription prices (test mode).
+-- Seed the VINtage subscription prices (Stripe LIVE mode; live IDs set 2026-07-19).
 insert into public.products (slug, name, product_type, requires_account, stripe_price_id, is_active)
 values
-  ('vintage-monthly', 'VINtage — Monthly', 'subscription', true, 'price_1Tr9ZgFpYKBwzJBRrFqmhAOA', true),
-  ('vintage-annual', 'VINtage — Annual', 'subscription', true, 'price_1Tr9aLFpYKBwzJBRBjSVTbhx', true);
+  ('vintage-monthly', 'VINtage — Monthly', 'subscription', true, 'price_1TueX9FlDAiFcsK78HqiLNqF', true),
+  ('vintage-annual', 'VINtage — Annual', 'subscription', true, 'price_1TueX7FlDAiFcsK7ZN15So4S', true);

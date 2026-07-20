@@ -3,7 +3,7 @@
 -- dashboard -- no account required, delivered as a per-buyer watermarked
 -- download by get-download-link.
 --
--- Stripe one-time $499 price for "Fixed Ops P&L Snapshot" (sandbox/test mode),
+-- Stripe one-time $499 price for "Fixed Ops P&L Snapshot" (Stripe LIVE mode; live ID set 2026-07-19),
 -- created 2026-07-16.
 --
 -- The file must be uploaded to the `digital-Products` bucket (capital P --
@@ -14,7 +14,7 @@ values (
   'Fixed Ops P&L Snapshot',
   'one_time',
   false,
-  'price_1TtrWUFpYKBwzJBRRt7IYZ80',
+  'price_1TueX3FlDAiFcsK7nFXz8QEA',
   'dealer-pl-snapshot/index.html',
   true
 )

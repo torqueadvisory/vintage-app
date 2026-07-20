@@ -3,7 +3,7 @@
 -- P&L Snapshot on the ladder. Priced on the full-year forecast, which is
 -- deliberately NOT in the dashboard.
 --
--- Stripe one-time $399 price (sandbox/test mode), created 2026-07-16.
+-- Stripe one-time $399 price (Stripe LIVE mode), created 2026-07-16; live ID set 2026-07-19.
 --
 -- This is the first NON-HTML product. It is an .xlsx, so get-download-link
 -- serves it as a short-lived signed URL rather than stamping a per-buyer
@@ -22,7 +22,7 @@ values (
   'Technician Productivity Analyzer',
   'one_time',
   false,
-  'price_1TtttbFpYKBwzJBR0fQNyNf3',
+  'price_1TueX3FlDAiFcsK73xeedoWw',
   'technician-productivity-analyzer/Torque_Technician_Productivity_Analyzer.xlsx',
   true
 )
