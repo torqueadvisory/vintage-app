@@ -1,0 +1,10 @@
+project_id = "epvarnbcturugkecsgkx"
+
+[functions.create-checkout-session]
+verify_jwt = false
+
+[functions.stripe-webhook]
+verify_jwt = false
+
+[functions.get-download-link]
+verify_jwt = false

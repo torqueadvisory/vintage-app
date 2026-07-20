@@ -1,0 +1,22 @@
+# Dependencies & build output
+node_modules
+dist
+
+# macOS
+.DS_Store
+
+# Local dev TLS certs
+.certs
+
+# Secrets & environment (NEVER commit these)
+.env
+.env.*
+.env.local
+
+# Local-only notes / logs
+TESTING.md
+Terminal Saved Output.txt
+
+# Machine-specific Claude Code + Supabase CLI state
+.claude/settings.local.json
+supabase/.temp/
