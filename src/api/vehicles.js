@@ -8,6 +8,7 @@ function toDb(vehicle) {
   return {
     id: vehicle.id,
     vin: vehicle.vin,
+    stock_number: emptyToNull(typeof vehicle.stockNumber === 'string' ? vehicle.stockNumber.trim() : vehicle.stockNumber),
     year: vehicle.year ? Number(vehicle.year) || null : null,
     make: vehicle.make || null,
     model: vehicle.model || null,
@@ -33,6 +34,7 @@ function fromDb(row) {
   return {
     id: row.id,
     vin: row.vin,
+    stockNumber: row.stock_number || '',
     year: row.year != null ? String(row.year) : '',
     make: row.make || '',
     model: row.model || '',

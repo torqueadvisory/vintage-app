@@ -193,6 +193,36 @@ input {
   justify-content: flex-end;
 }
 
+.search-row {
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.search-input {
+  padding-right: 34px;
+}
+
+.search-clear {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.field-optional {
+  font-weight: 400;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
 .plan-options {
   display: flex;
   flex-direction: column;
@@ -478,6 +508,14 @@ input {
 .vehicle-card-title {
   font-size: 15px;
   font-weight: 700;
+}
+
+.vehicle-card-stock {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--navy);
+  letter-spacing: 0.02em;
+  margin-top: 2px;
 }
 
 .vehicle-card-sub {

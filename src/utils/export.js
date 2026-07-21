@@ -8,6 +8,7 @@ import {
 } from './calculations.js'
 
 const COLUMNS = [
+  { header: 'Stock #', value: (v) => v.stockNumber || '' },
   { header: 'VIN', value: (v) => v.vin },
   { header: 'Year', value: (v) => v.year },
   { header: 'Make', value: (v) => v.make },

@@ -70,6 +70,9 @@ function VehicleCard({ vehicle, onSelect, userId, photoVersion }) {
             <div className="vehicle-card-title">
               {vehicle.year} {vehicle.make} {vehicle.model}
             </div>
+            {vehicle.stockNumber && (
+              <div className="vehicle-card-stock">Stock #{vehicle.stockNumber}</div>
+            )}
             <div className="vehicle-card-sub">
               {[
                 vehicle.trim,
@@ -111,13 +114,27 @@ export default function InventoryList({
   loading,
   error,
 }) {
+  const [query, setQuery] = useState('')
+
   const { active, sold } = useMemo(() => {
-    const activeList = vehicles.filter((v) => !isSold(v))
-    const soldList = vehicles.filter((v) => isSold(v))
+    const q = query.trim().toLowerCase()
+    const qStripped = q.replace(/[^a-z0-9]/g, '')
+    const matches = (v) => {
+      if (!q) return true
+      const hay = [v.stockNumber, v.vin, v.year, v.make, v.model, v.trim]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase()
+      // plain contains, plus a punctuation-insensitive pass so "a4471" finds "A-4471"
+      return hay.includes(q) || (qStripped !== '' && hay.replace(/[^a-z0-9]/g, '').includes(qStripped))
+    }
+    const filtered = vehicles.filter(matches)
+    const activeList = filtered.filter((v) => !isSold(v))
+    const soldList = filtered.filter((v) => isSold(v))
     activeList.sort((a, b) => (daysInInventory(b) ?? 0) - (daysInInventory(a) ?? 0))
     soldList.sort((a, b) => new Date(b.soldDate) - new Date(a.soldDate))
     return { active: activeList, sold: soldList }
-  }, [vehicles])
+  }, [vehicles, query])
 
   return (
     <div className="screen">
@@ -152,11 +169,40 @@ export default function InventoryList({
         )}
 
         {vehicles.length > 0 && (
+          <div className="search-row">
+            <input
+              className="input search-input"
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search stock #, VIN, make, model…"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
+            />
+            {query && (
+              <button
+                type="button"
+                className="search-clear"
+                onClick={() => setQuery('')}
+                aria-label="Clear search"
+              >
+                ×
+              </button>
+            )}
+          </div>
+        )}
+
+        {vehicles.length > 0 && (
           <div className="export-row">
-            <button type="button" className="link-btn" onClick={() => exportVehiclesToCsv(vehicles)}>
+            <button type="button" className="link-btn" onClick={() => exportVehiclesToCsv([...active, ...sold])}>
               Export to Excel
             </button>
           </div>
+        )}
+
+        {vehicles.length > 0 && query && active.length === 0 && sold.length === 0 && (
+          <p className="hint">No vehicles match "{query}".</p>
         )}
 
         {active.length > 0 && (

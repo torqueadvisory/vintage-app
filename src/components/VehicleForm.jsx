@@ -18,6 +18,7 @@ function emptyVehicle() {
   return {
     id: crypto.randomUUID(),
     vin: '',
+    stockNumber: '',
     year: '',
     make: '',
     model: '',
@@ -264,7 +265,20 @@ export default function VehicleForm({ initialVehicle, onSave, onCancel, onDelete
                 onChange={(e) => update('acquisitionDate', e.target.value)}
               />
             </div>
-            <div className="field" />
+            <div className="field">
+              <label className="field-label" htmlFor="stockNumber">Stock # <span className="field-optional">(optional)</span></label>
+              <input
+                id="stockNumber"
+                className="input"
+                value={vehicle.stockNumber}
+                onChange={(e) => update('stockNumber', e.target.value)}
+                placeholder="e.g. A-4471"
+                autoCapitalize="characters"
+                autoCorrect="off"
+                spellCheck={false}
+                maxLength={32}
+              />
+            </div>
           </div>
         </section>
 
