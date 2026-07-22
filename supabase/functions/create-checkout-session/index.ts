@@ -138,6 +138,13 @@ Deno.serve(async (req) => {
       supabase_user_id: userId ?? '',
     }
 
+    // Stripe Tax stays OFF until the NY registration is set up in the Stripe
+    // dashboard -- enabling automatic_tax before that makes Stripe reject every
+    // checkout. Flip it on by setting the STRIPE_TAX_ENABLED secret to "true"
+    // ONLY after Tax is activated in the dashboard. With it enabled, Checkout
+    // collects the buyer's address and applies the correct sales tax.
+    const taxEnabled = Deno.env.get('STRIPE_TAX_ENABLED') === 'true'
+
     const session = await stripeRequest('POST', 'checkout/sessions', {
       mode: product.product_type === 'subscription' ? 'subscription' : 'payment',
       line_items: [{ price: product.stripe_price_id, quantity: 1 }],
@@ -145,8 +152,14 @@ Deno.serve(async (req) => {
       cancel_url,
       customer_email: userEmail ?? email ?? undefined,
       metadata,
+      ...(taxEnabled ? { automatic_tax: { enabled: true } } : {}),
       ...(product.product_type === 'subscription'
-        ? { subscription_data: { trial_period_days: 14, metadata } }
+        ? {
+            subscription_data: {
+              trial_period_days: 14,
+              metadata,
+            },
+          }
         : {}),
     })
 
