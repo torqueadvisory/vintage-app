@@ -311,6 +311,12 @@ input {
   min-width: 0;
 }
 
+/* `gap` only separates fields WITHIN a row, so stacked rows had no vertical
+   breathing room and the next row's labels sat against the inputs above. */
+.field-row + .field-row {
+  margin-top: 14px;
+}
+
 .input {
   width: 100%;
   min-width: 0;
