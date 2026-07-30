@@ -306,8 +306,16 @@ input {
   min-width: 0;
 }
 
+/* Date inputs carry an intrinsic width that Safari will not shrink below,
+   which let the date crowd whatever sat beside it. Give the date a smaller
+   share of the row and allow the control itself to shrink. */
+.field-date {
+  flex: 0 1 44%;
+}
+
 .input {
   width: 100%;
+  min-width: 0;
   padding: 11px 12px;
   border: 1px solid var(--border);
   border-radius: 8px;
