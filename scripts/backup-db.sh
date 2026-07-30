@@ -14,7 +14,7 @@
 set -uo pipefail
 
 PROJECT_DIR="/Users/jefflovette/Desktop/Wheelhouse App"
-BACKUP_DIR="/Users/jefflovette/Desktop/VINtage Backups"
+BACKUP_DIR="/Users/jefflovette/Desktop/Torque Private/VINtage Backups"
 KEEP=8
 
 mkdir -p "$BACKUP_DIR"
