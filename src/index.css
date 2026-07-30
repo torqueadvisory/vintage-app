@@ -311,10 +311,24 @@ input {
   min-width: 0;
 }
 
-/* `gap` only separates fields WITHIN a row, so stacked rows had no vertical
+/* gap only separates fields WITHIN a row, so stacked rows had no vertical
    breathing room and the next row's labels sat against the inputs above. */
 .field-row + .field-row {
   margin-top: 14px;
+}
+
+/* iOS draws input[type=date] wider than the width it reports to the flex
+   layout, so a date sharing a row will silently overlap its neighbour no
+   matter what min-width it is given. Giving it the full row removes the
+   possibility instead of negotiating with it. */
+.field-full {
+  flex: 1 1 100%;
+}
+
+input[type="date"].input {
+  -webkit-appearance: none;
+  appearance: none;
+  max-width: 100%;
 }
 
 .input {

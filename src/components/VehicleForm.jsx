@@ -255,7 +255,7 @@ export default function VehicleForm({ initialVehicle, onSave, onCancel, onDelete
             </div>
           </div>
           <div className="field-row">
-            <div className="field">
+            <div className="field field-full">
               <label className="field-label" htmlFor="acquisitionDate">Acquisition Date</label>
               <input
                 id="acquisitionDate"
@@ -265,7 +265,7 @@ export default function VehicleForm({ initialVehicle, onSave, onCancel, onDelete
                 onChange={(e) => update('acquisitionDate', e.target.value)}
               />
             </div>
-            <div className="field">
+            <div className="field field-full">
               <label className="field-label" htmlFor="stockNumber">Stock # <span className="field-optional">(optional)</span></label>
               <input
                 id="stockNumber"
