@@ -296,21 +296,19 @@ input {
   margin-bottom: 6px;
 }
 
+/* Fields sit side by side when there is room and drop to their own line when
+   there is not. iOS renders input[type=date] wider than other controls and
+   will not shrink it, so a fixed two-up row could overlap on a narrow phone;
+   wrapping removes that failure mode entirely. */
 .field-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
 }
 
 .field {
-  flex: 1;
+  flex: 1 1 150px;
   min-width: 0;
-}
-
-/* Date inputs carry an intrinsic width that Safari will not shrink below,
-   which let the date crowd whatever sat beside it. Give the date a smaller
-   share of the row and allow the control itself to shrink. */
-.field-date {
-  flex: 0 1 44%;
 }
 
 .input {

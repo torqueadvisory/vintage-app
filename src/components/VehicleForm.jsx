@@ -255,7 +255,7 @@ export default function VehicleForm({ initialVehicle, onSave, onCancel, onDelete
             </div>
           </div>
           <div className="field-row">
-            <div className="field field-date">
+            <div className="field">
               <label className="field-label" htmlFor="acquisitionDate">Acquisition Date</label>
               <input
                 id="acquisitionDate"
