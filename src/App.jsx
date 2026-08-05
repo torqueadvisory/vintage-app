@@ -7,6 +7,7 @@ import Settings from './components/Settings.jsx'
 import { supabase } from './lib/supabaseClient.js'
 import { listVehicles, createVehicle, updateVehicle, deleteVehicle } from './api/vehicles.js'
 import { uploadVehiclePhoto, removeVehiclePhoto } from './api/photos.js'
+import { uploadReceipt } from './api/receipts.js'
 import { getActiveSubscription } from './api/subscription.js'
 
 export default function App() {
@@ -111,7 +112,7 @@ export default function App() {
     setLogoVersion(Date.now())
   }
 
-  const handleSave = async (vehicle, photoAction) => {
+  const handleSave = async (vehicle, photoAction, receiptBlobs = []) => {
     const exists = vehicles.some((v) => v.id === vehicle.id)
     const saved = exists ? await updateVehicle(vehicle) : await createVehicle(vehicle)
     setVehicles((prev) => (exists ? prev.map((v) => (v.id === saved.id ? saved : v)) : [saved, ...prev]))
@@ -128,6 +129,18 @@ export default function App() {
         setPhotoVersion(Date.now())
       } catch {
         setError('Vehicle saved, but the photo could not be uploaded. Open it and try the photo again.')
+      }
+    }
+
+    // Same contract for scanned receipts: the recon items themselves are
+    // already in the saved row, so a failed archive upload costs the paper
+    // trail, never the numbers.
+    if (receiptBlobs.length > 0) {
+      const results = await Promise.allSettled(
+        receiptBlobs.map((blob) => uploadReceipt(session.user.id, saved.id, blob)),
+      )
+      if (results.some((r) => r.status === 'rejected')) {
+        setError('Vehicle saved, but a receipt image could not be attached.')
       }
     }
     closeForm()

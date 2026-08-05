@@ -1,7 +1,8 @@
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import VinScanner from './VinScanner.jsx'
 import { decodeVin, VinDecodeError } from '../api/nhtsa.js'
 import { getPhotoUrl, shrinkPhoto } from '../api/photos.js'
+import { shrinkReceipt, scanReceipt, listReceipts, getReceiptUrl, receiptLabel } from '../api/receipts.js'
 import {
   reconTotal,
   totalInvestment,
@@ -50,6 +51,85 @@ export default function VehicleForm({ initialVehicle, onSave, onCancel, onDelete
   const [photoBusy, setPhotoBusy] = useState(false)
   const [photoError, setPhotoError] = useState('')
   const photoInputRef = useRef(null)
+
+  // Receipt scanning. The AI extraction is never trusted blindly: parsed line
+  // items land in `scanReview` for the user to edit/confirm before they join
+  // reconItems. Confirmed receipt images queue in `receiptQueue` and upload
+  // after the vehicle row saves (non-fatal, same contract as the photo).
+  const [scanBusy, setScanBusy] = useState(false)
+  const [scanError, setScanError] = useState('')
+  const [scanReview, setScanReview] = useState(null) // { vendor, date, total, items:[{id,description,amount}], blob }
+  const [receiptQueue, setReceiptQueue] = useState([])
+  const [savedReceipts, setSavedReceipts] = useState([])
+  const receiptInputRef = useRef(null)
+
+  useEffect(() => {
+    if (!initialVehicle) return
+    listReceipts(userId, initialVehicle.id)
+      .then(setSavedReceipts)
+      .catch(() => {}) // the list is a convenience; the form works without it
+  }, [initialVehicle, userId])
+
+  const handleReceiptPick = async (file) => {
+    if (!file) return
+    setScanBusy(true)
+    setScanError('')
+    try {
+      const blob = await shrinkReceipt(file)
+      const result = await scanReceipt(blob)
+      setScanReview({
+        vendor: result.vendor,
+        date: result.date,
+        total: result.total,
+        items: result.line_items.map((it) => ({
+          id: crypto.randomUUID(),
+          description: it.description,
+          amount: String(it.amount),
+        })),
+        blob,
+      })
+    } catch (err) {
+      setScanError(err.message || 'Could not scan the receipt.')
+    } finally {
+      setScanBusy(false)
+      if (receiptInputRef.current) receiptInputRef.current.value = ''
+    }
+  }
+
+  const updateScanItem = (id, field, value) => {
+    setScanReview((r) => ({
+      ...r,
+      items: r.items.map((it) => (it.id === id ? { ...it, [field]: value } : it)),
+    }))
+  }
+
+  const removeScanItem = (id) => {
+    setScanReview((r) => ({ ...r, items: r.items.filter((it) => it.id !== id) }))
+  }
+
+  const confirmScan = () => {
+    const items = scanReview.items
+      .filter((it) => it.description.trim() !== '' && it.amount !== '')
+      .map((it) => ({ id: it.id, description: it.description.trim(), cost: it.amount }))
+    if (items.length > 0) {
+      update('reconItems', [...vehicle.reconItems, ...items])
+      setReceiptQueue((q) => [...q, scanReview.blob])
+    }
+    setScanReview(null)
+  }
+
+  const openReceipt = async (fileName) => {
+    try {
+      const url = await getReceiptUrl(userId, vehicle.id, fileName)
+      window.open(url, '_blank', 'noopener')
+    } catch {
+      setScanError('Could not open that receipt.')
+    }
+  }
+
+  const scanTotal = scanReview
+    ? scanReview.items.reduce((sum, it) => sum + (Number(it.amount) || 0), 0)
+    : 0
 
   const handlePhotoPick = async (file) => {
     if (!file) return
@@ -285,9 +365,86 @@ export default function VehicleForm({ initialVehicle, onSave, onCancel, onDelete
         <section className="card">
           <div className="card-title-row">
             <h2 className="card-title">Repair / Recon Items</h2>
-            <button type="button" className="link-btn" onClick={addReconItem}>+ Add item</button>
+            <div className="photo-actions">
+              <button
+                type="button"
+                className="link-btn"
+                onClick={() => receiptInputRef.current?.click()}
+                disabled={scanBusy || Boolean(scanReview)}
+              >
+                {scanBusy ? 'Scanning…' : '📷 Scan receipt'}
+              </button>
+              <button type="button" className="link-btn" onClick={addReconItem}>+ Add item</button>
+            </div>
           </div>
-          {vehicle.reconItems.length === 0 && <p className="hint">No recon items yet.</p>}
+          <input
+            ref={receiptInputRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            hidden
+            onChange={(e) => handleReceiptPick(e.target.files?.[0])}
+          />
+          {scanBusy && <p className="hint">Reading the receipt…</p>}
+          {scanError && <p className="hint hint-error">{scanError}</p>}
+
+          {scanReview && (
+            <div className="scan-review">
+              <div className="scan-review-head">
+                <strong>
+                  {[scanReview.vendor, scanReview.date].filter(Boolean).join(' · ') || 'Scanned receipt'}
+                </strong>
+                <span className="scan-review-sub">Check the amounts, then add.</span>
+              </div>
+              {scanReview.items.map((it) => (
+                <div className="recon-row" key={it.id}>
+                  <input
+                    className="input recon-desc"
+                    value={it.description}
+                    onChange={(e) => updateScanItem(it.id, 'description', e.target.value)}
+                  />
+                  <input
+                    className="input recon-cost"
+                    type="number"
+                    inputMode="decimal"
+                    min="0"
+                    value={it.amount}
+                    onChange={(e) => updateScanItem(it.id, 'amount', e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="icon-btn icon-btn-remove"
+                    onClick={() => removeScanItem(it.id)}
+                    aria-label="Remove item"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+              {scanReview.total != null && Math.abs(scanTotal - scanReview.total) > 0.01 && (
+                <p className="hint hint-error">
+                  Items add to {formatCurrency(scanTotal)} but the receipt total is {formatCurrency(scanReview.total)}.
+                </p>
+              )}
+              <div className="scan-review-actions">
+                <button type="button" className="btn btn-secondary btn-compact" onClick={() => setScanReview(null)}>
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary btn-compact"
+                  onClick={confirmScan}
+                  disabled={scanReview.items.length === 0}
+                >
+                  Add {scanReview.items.length} item{scanReview.items.length === 1 ? '' : 's'} · {formatCurrency(scanTotal)}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {vehicle.reconItems.length === 0 && !scanReview && !scanBusy && (
+            <p className="hint">No recon items yet. Scan a repair receipt or add one by hand.</p>
+          )}
           {vehicle.reconItems.map((item) => (
             <div className="recon-row" key={item.id}>
               <input
@@ -317,6 +474,21 @@ export default function VehicleForm({ initialVehicle, onSave, onCancel, onDelete
           ))}
           {vehicle.reconItems.length > 0 && (
             <p className="recon-total">Recon total: {formatCurrency(totals.recon)}</p>
+          )}
+
+          {(savedReceipts.length > 0 || receiptQueue.length > 0) && (
+            <div className="receipt-list">
+              {savedReceipts.map((f) => (
+                <button type="button" key={f.name} className="receipt-chip" onClick={() => openReceipt(f.name)}>
+                  🧾 {receiptLabel(f.name)}
+                </button>
+              ))}
+              {receiptQueue.length > 0 && (
+                <span className="receipt-pending">
+                  {receiptQueue.length} receipt{receiptQueue.length === 1 ? '' : 's'} will be attached on save
+                </span>
+              )}
+            </div>
           )}
         </section>
 
@@ -382,7 +554,7 @@ export default function VehicleForm({ initialVehicle, onSave, onCancel, onDelete
           type="button"
           className="btn btn-primary btn-block"
           disabled={!canSave}
-          onClick={() => onSave(vehicle, photoAction)}
+          onClick={() => onSave(vehicle, photoAction, receiptQueue)}
         >
           Save Vehicle
         </button>
