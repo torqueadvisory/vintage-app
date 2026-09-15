@@ -6,6 +6,9 @@ whole lot — on your phone, from the lot.
 
 A product of **Torque Advisory Group** · [torqueadvisorygroup.com](https://torqueadvisorygroup.com)
 
+**[▶ Watch the 60-second demo](https://torqueadvisorygroup.com/demo)** — a
+self-running tour of the app (sample data).
+
 Designed, built, and operated by **Jeff LoVette** — a solo-founder production
 app with real paying-customer infrastructure: live Stripe billing with
 automatic tax, row-level security throughout, AI-assisted data entry with
