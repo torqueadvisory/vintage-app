@@ -736,3 +736,14 @@ input[type="date"].input {
   font-size: 14px;
   max-width: 340px;
 }
+
+.renewal-note {
+  margin-top: 14px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.renewal-note a {
+  color: inherit;
+  text-decoration: underline;
+}

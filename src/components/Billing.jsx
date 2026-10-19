@@ -60,6 +60,19 @@ export default function Billing({ onLogout, onRefresh, checkingOut, error }) {
                 {starting === 'vintage-annual' ? 'Redirecting…' : 'Start Annual — $480/yr'}
               </button>
             </div>
+
+            {/* Auto-renewal disclosure shown before the card form, as ROSCA
+                and California B&P 17602 require for online subscriptions. */}
+            <p className="hint renewal-note">
+              After the 14-day free trial, your plan renews automatically
+              ($50/month or $480/year plus any applicable tax) until you
+              cancel. Cancel anytime in Settings → Manage Subscription —
+              no call or email needed. See our{' '}
+              <a href="https://torqueadvisorygroup.com/terms.html" target="_blank" rel="noreferrer">
+                terms
+              </a>{' '}
+              for details.
+            </p>
           </section>
         )}
       </div>

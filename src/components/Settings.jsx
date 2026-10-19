@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { getLogoUrl, uploadLogo, removeLogo } from '../api/logo.js'
+import { openBillingPortal } from '../api/billing.js'
 
 const ACCEPTED_TYPES = ['image/png', 'image/jpeg', 'image/webp']
 const MAX_SIZE = 3 * 1024 * 1024
@@ -9,6 +10,19 @@ export default function Settings({ userId, onClose }) {
   const [failed, setFailed] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState('')
+  const [portalBusy, setPortalBusy] = useState(false)
+  const [portalError, setPortalError] = useState('')
+
+  const handlePortal = async () => {
+    setPortalBusy(true)
+    setPortalError('')
+    try {
+      await openBillingPortal() // navigates away on success
+    } catch (err) {
+      setPortalError(err.message)
+      setPortalBusy(false)
+    }
+  }
 
   const handleFile = async (e) => {
     const file = e.target.files?.[0]
@@ -88,6 +102,18 @@ export default function Settings({ userId, onClose }) {
           <button type="button" className="btn btn-danger btn-block" onClick={handleRemove} disabled={uploading}>
             Remove Logo
           </button>
+        </section>
+
+        <section className="card">
+          <h2 className="card-title">Subscription</h2>
+          <p className="hint">
+            Cancel anytime, update your card, or download invoices. Changes take
+            effect through Stripe immediately.
+          </p>
+          <button type="button" className="btn btn-secondary btn-block" onClick={handlePortal} disabled={portalBusy}>
+            {portalBusy ? 'Opening…' : 'Manage Subscription'}
+          </button>
+          {portalError && <p className="hint hint-error">{portalError}</p>}
         </section>
       </div>
     </div>
