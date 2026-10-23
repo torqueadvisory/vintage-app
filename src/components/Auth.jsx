@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { supabase } from '../lib/supabaseClient.js'
 import torqueLogo from '../assets/torque-advisory-logo.png'
 import vintageLogo from '../assets/vintage-logo.png'
+import lotSunset from '../assets/lot-sunset.jpg'
 
 export default function Auth() {
   const [mode, setMode] = useState('signIn')
@@ -36,22 +37,21 @@ export default function Auth() {
   }
 
   return (
-    <div className="screen">
-      <header className="screen-header">
-        <h1>VINtage</h1>
-        <span />
-      </header>
-
-      <div className="screen-body">
-        <div className="auth-logo">
-          <img src={vintageLogo} alt="VINtage" />
+    <div className="auth-screen" style={{ backgroundImage: `url(${lotSunset})` }}>
+      <div className="auth-overlay" />
+      <div className="auth-content">
+        <div className="auth-top">
+          <div className="auth-logoplate">
+            <img src={vintageLogo} alt="VINtage" />
+          </div>
+          <p className="auth-tag">Know your true profit on every unit.</p>
         </div>
 
-        <form className="card" onSubmit={handleSubmit}>
-          <label className="field-label" htmlFor="email">Email</label>
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <label className="auth-label" htmlFor="email">Email</label>
           <input
             id="email"
-            className="input"
+            className="auth-input"
             type="email"
             autoComplete="email"
             value={email}
@@ -59,12 +59,10 @@ export default function Auth() {
             required
           />
 
-          <div style={{ height: 12 }} />
-
-          <label className="field-label" htmlFor="password">Password</label>
+          <label className="auth-label" htmlFor="password">Password</label>
           <input
             id="password"
-            className="input"
+            className="auth-input"
             type="password"
             autoComplete={isSignUp ? 'new-password' : 'current-password'}
             value={password}
@@ -73,31 +71,28 @@ export default function Auth() {
             required
           />
 
-          {error && <p className="hint hint-error">{error}</p>}
-          {message && <p className="hint">{message}</p>}
+          {error && <p className="auth-hint auth-hint-error">{error}</p>}
+          {message && <p className="auth-hint">{message}</p>}
 
-          <div style={{ height: 16 }} />
-
-          <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
+          <button type="submit" className="btn btn-primary btn-block auth-btn" disabled={loading}>
             {isSignUp ? 'Sign Up' : 'Log In'}
           </button>
 
           <button
             type="button"
-            className="link-btn"
+            className="auth-alt"
             onClick={() => {
               setMode(isSignUp ? 'signIn' : 'signUp')
               setError('')
               setMessage('')
             }}
-            style={{ marginTop: 12 }}
           >
             {isSignUp ? 'Already have an account? Log in' : 'New here? Create an account'}
           </button>
         </form>
 
-        <p className="powered-by">
-          <img src={torqueLogo} alt="Torque Advisory Group" />
+        <p className="auth-powered">
+          <span className="auth-tplate"><img src={torqueLogo} alt="" /></span>
           Powered by Torque Advisory Group
         </p>
       </div>

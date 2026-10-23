@@ -747,3 +747,143 @@ input[type="date"].input {
   color: inherit;
   text-decoration: underline;
 }
+
+/* Auth landing: the lot photo is the entire base layer (design picked
+   2026-10-23 after four mockups -- "boxless" variant D). Elements float
+   directly on the photo; only the logo and the Torque mark get plates.
+   Photo source + license: src/assets/LICENSES.md */
+.auth-screen {
+  min-height: 100dvh;
+  background-position: center 62%;
+  background-size: cover;
+  position: relative;
+}
+
+.auth-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(13,24,38,.10) 0%, rgba(13,24,38,.26) 50%, rgba(13,24,38,.46) 100%);
+}
+
+.auth-content {
+  position: relative;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 28px env(safe-area-inset-bottom);
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.auth-top {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 24px;
+}
+
+.auth-logoplate {
+  background: rgba(252,253,255,.93);
+  border-radius: 16px;
+  padding: 14px 22px 11px;
+  box-shadow: 0 12px 40px rgba(8,16,28,.5);
+}
+
+.auth-logoplate img {
+  width: 210px;
+  max-width: 58vw;
+  display: block;
+}
+
+.auth-tag {
+  color: #f0f6fc;
+  font-size: 13.5px;
+  font-weight: 600;
+  margin-top: 14px;
+  text-shadow: 0 1px 8px rgba(0,0,0,.75);
+}
+
+.auth-form { width: 100%; }
+
+.auth-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: #fff;
+  text-shadow: 0 1px 6px rgba(0,0,0,.8);
+}
+
+.auth-input {
+  box-sizing: border-box;
+  width: 100%;
+  border: 0;
+  border-radius: 11px;
+  padding: 14px 13px;
+  font-size: 16px;
+  margin: 7px 0 18px;
+  background: rgba(255,255,255,.95);
+  box-shadow: 0 8px 26px rgba(8,16,28,.45);
+  color: var(--ink);
+}
+
+.auth-btn {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  border-radius: 11px;
+  padding: 15px;
+  box-shadow: 0 10px 30px rgba(8,16,28,.5);
+}
+
+.auth-alt {
+  display: block;
+  width: 100%;
+  background: none;
+  border: 0;
+  text-align: center;
+  font-size: 13.5px;
+  color: #fff;
+  font-weight: 700;
+  margin-top: 15px;
+  text-shadow: 0 1px 6px rgba(0,0,0,.8);
+  cursor: pointer;
+}
+
+/* hints sit on the photo, so they carry their own contrast */
+.auth-hint {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(13,24,38,.55);
+  border-radius: 8px;
+  padding: 8px 11px;
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+.auth-hint-error { background: rgba(140,28,20,.78); }
+
+.auth-powered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #e4edf5;
+  font-size: 11.5px;
+  padding: 24px 0 28px;
+  text-shadow: 0 1px 5px rgba(0,0,0,.7);
+}
+
+.auth-tplate {
+  background: rgba(252,253,255,.92);
+  border-radius: 7px;
+  padding: 3px 7px;
+  display: inline-flex;
+}
+
+.auth-tplate img { height: 20px; width: auto; display: block; }
